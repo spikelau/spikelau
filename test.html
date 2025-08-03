@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Microscopic Haematuria Risk Stratification Calculator (AUA 2025)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0 0.6em 2em 0.6em; background: #f9fbfd; max-width: 520px;}
+    h2 { font-size: 1.18em; margin: 1em 0 0.7em 0; text-align:center;}
+    #mhCalculator { background: #fff; border-radius: 12px; box-shadow: 0 1px 6px #d0d7de; padding: 1.1em 0.7em 0.9em 0.7em; max-width:500px; margin:0 auto 1.2em auto;}
+    .form-row { margin-bottom: 1.31em; }
+    .row-label { display:block; font-weight:500; font-size:1em; margin-bottom:0.18em;}
+    .horiz-options { display:flex; flex-wrap: wrap; gap:1.13em; margin: 0.22em 0 0.12em 0.12em;}
+    .vert-options { display:flex; flex-direction:column; gap:0.43em; margin: 0.23em 0 0.13em 0.12em;}
+    .radio-label { display:flex; align-items:center; font-weight:normal; font-size:1em; margin:0;}
+    .radio-label input[type="radio"] { margin-right:0.44em; accent-color: #3162c6; }
+    .risk-factors-vert { display:flex; flex-direction:column; gap:0.43em; margin: 0.18em 0 0.11em 0.12em;}
+    .checkbox-label { display:flex; align-items:center; font-weight:normal; font-size:1em; }
+    .checkbox-label input[type="checkbox"] { margin-right:0.44em; accent-color:#3162c6; }
+    .form-actions { display:flex; justify-content:space-between; }
+    button { width:47%; font-size: 1.09em; padding: 0.72em 0; margin:0.25em 0 0 0; border-radius: 6px; font-weight: bold; border:none; letter-spacing:.01em; box-shadow:0 1px 2px #dae0ea; }
+    #riskBtn { background:#3162c6; color: #fff; }
+    #resetBtn { background:#ddd; color:#294; }
+    .result-box {
+      margin-top: 1.7em;
+      border-radius: 10px;
+      border: 2.5px solid #2978c6;
+      background: linear-gradient(90deg, #e7ebfa 30%, #f6f8fe 100%);
+      font-weight: bold;
+      font-size: 1.13em;
+      padding: 1.25em 1em;
+      color: #224d93;
+      box-shadow: 0 2px 8px #c2d5f7;
+      text-align: center;
+      min-height: 2em;
+    }
+    .result-box.error {
+      color:#ca1812; border:2.5px solid #ca1812;
+      background: linear-gradient(90deg,#fff2f1 30%,#ffe8e7 100%);
+      box-shadow:0 1px 6px #e7cac7;
+    }
+    table { margin:2em 0 1em 0; border-collapse:collapse; width:100%; font-size:0.97em; background:#fff; box-shadow:0 1.5px 6px #dde3ea;}
+    table, th, td { border:1px solid #d9dee9; padding:9px 7px; text-align:center; vertical-align:top; }
+    th { background:#f0f5fa; font-weight:600; font-size:1em; }
+    caption { font-size:1.07em; font-weight:bold; margin-bottom:0.8em; }
+    ul { margin:0.23em 0 0.22em 0.4em; padding-left:1em; text-align:left;}
+    @media (max-width:420px) {
+      h2 { font-size:1.05em; }
+      table, th, td { font-size:0.95em; padding:7px 2.5px;}
+      .radio-label, .checkbox-label { font-size:0.98em; }
+      button { font-size:1em; padding:0.6em 0;}
+    }
+  </style>
+</head>
+<body>
+  <h2>Microscopic Haematuria Risk Stratification (AUA 2025)</h2>
+  <div id="mhCalculator">
+    <div class="form-row">
+      <span class="row-label">RBC per HPF:</span>
+      <div class="horiz-options">
+        <label class="radio-label"><input type="radio" name="rbc" value="3-10" required /> 3–10</label>
+        <label class="radio-label"><input type="radio" name="rbc" value="11-25" /> 11–25</label>
+        <label class="radio-label"><input type="radio" name="rbc" value=">25" /> &gt;25</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <span class="row-label">Age group (years):</span>
+      <div class="horiz-options">
+        <label class="radio-label"><input type="radio" name="agegrp" value="<40" required /> &lt;40</label>
+        <label class="radio-label"><input type="radio" name="agegrp" value="40-59" /> 40–59</label>
+        <label class="radio-label"><input type="radio" name="agegrp" value="60+" /> ≥60</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <span class="row-label">Smoking history:</span>
+      <div class="vert-options">
+        <label class="radio-label"><input type="radio" name="smoke" value="never" required /> Never smoked (&lt;10 pack-years)</label>
+        <label class="radio-label"><input type="radio" name="smoke" value="10-30" /> 10–30 pack-years</label>
+        <label class="radio-label"><input type="radio" name="smoke" value=">30" /> &gt;30 pack-years</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <span class="row-label">Sex assigned at birth:</span>
+      <div class="horiz-options">
+        <label class="radio-label"><input type="radio" name="sex" value="M" required /> Male</label>
+        <label class="radio-label"><input type="radio" name="sex" value="F" /> Female</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <span class="row-label">Additional risk factors: <span style="font-weight:400; font-size:0.93em;">(Select all that apply)</span></span>
+      <div class="risk-factors-vert">
+        <label class="checkbox-label"><input type="checkbox" class="extra-factor" value="irritative" /> Irritative urinary symptoms</label>
+        <label class="checkbox-label"><input type="checkbox" class="extra-factor" value="radiation" /> Prior pelvic radiation</label>
+        <label class="checkbox-label"><input type="checkbox" class="extra-factor" value="chemo" /> Prior cyclophosphamide/ifosfamide chemotherapy</label>
+        <label class="checkbox-label"><input type="checkbox" class="extra-factor" value="family" /> Family history of urothelial cancer or Lynch Syndrome</label>
+        <label class="checkbox-label"><input type="checkbox" class="extra-factor" value="occupation" /> Occupational exposure (aromatic amines, petrochemicals, dyes)</label>
+        <label class="checkbox-label"><input type="checkbox" class="extra-factor" value="foreignbody" /> Chronic indwelling urinary foreign body</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <span class="row-label">
+        Persistent microscopic haematuria —
+        <span style="font-weight:400;display:block;font-size:0.97em">
+          Previously low/negligible-risk, no prior evaluation and 3–25 RBC/HPF on repeat UA
+        </span>
+      </span>
+      <div class="horiz-options">
+        <label class="radio-label"><input type="radio" name="persist" value="no" required /> No</label>
+        <label class="radio-label"><input type="radio" name="persist" value="yes" /> Yes</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <span class="row-label">History of gross haematuria:</span>
+      <div class="horiz-options">
+        <label class="radio-label"><input type="radio" name="gross" value="no" required /> No</label>
+        <label class="radio-label"><input type="radio" name="gross" value="yes" /> Yes</label>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="button" id="riskBtn">Calculate Risk</button>
+      <button type="button" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <div id="result" class="result-box"></div>
+
+  <table id="riskTable" style="display:none;">
+    <caption>Microscopic Haematuria Risk Stratification Overview (AUA 2025)</caption>
+    <thead>
+      <tr>
+        <th>Risk Level</th>
+        <th>Key Defining Features</th>
+        <th>Estimated Risk of Malignancy (%)</th>
+        <th>Recommended Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Low/Negligible Risk</td>
+        <td>
+          <ul>
+            <li>3–10 RBC/HPF</li>
+            <li>Female &lt;60, Male &lt;40 years</li>
+            <li>Never smoked or &lt;10 pack-years</li>
+            <li>No additional risk factors</li>
+            <li>No persistent haematuria</li>
+            <li>No history of gross haematuria</li>
+          </ul>
+        </td>
+        <td>0–0.4%</td>
+        <td>Repeat urinalysis in 6 months; no initial cystoscopy or imaging unless symptoms evolve.</td>
+      </tr>
+      <tr>
+        <td>Intermediate Risk</td>
+        <td>
+          <ul>
+            <li>11–25 RBC/HPF</li>
+            <li>Female ≥60, Male 40–59 years</li>
+            <li>10–30 pack-years</li>
+            <li>One additional risk factor present</li>
+            <li>Persistent microscopic haematuria (Repeat UA 3–25 RBC/HPF)</li>
+            <li>No history of gross haematuria</li>
+          </ul>
+        </td>
+        <td>0.2–3.1%</td>
+        <td>
+          Cystoscopy &amp; renal/bladder ultrasound.<br />
+          May consider urine cytology or urine markers as adjunctive tests.
+        </td>
+      </tr>
+      <tr>
+        <td>High Risk</td>
+        <td>
+          <ul>
+            <li>&gt;25 RBC/HPF</li>
+            <li>Male ≥60 years</li>
+            <li>&gt;30 pack-years</li>
+            <li>Multiple additional risk factors</li>
+            <li>History of gross haematuria</li>
+          </ul>
+        </td>
+        <td>1.3–6.3%</td>
+        <td>
+          Cystoscopy plus cross-sectional imaging (CT urography preferred).<br />
+          Consider urine markers for upper tract urothelial carcinoma (e.g., UroVysion, NMP22) or urine cytology for bladder cancer detection.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    document.getElementById("resetBtn").onclick = function () {
+      // Reloading the page is the most reliable way to reset in a limited browser
+      location.reload();
+    };
+
+    document.getElementById("riskBtn").onclick = function () {
+      let rbcVal = document.querySelector('input[name="rbc"]:checked');
+      let ageVal = document.querySelector('input[name="agegrp"]:checked');
+      let smokeVal = document.querySelector('input[name="smoke"]:checked');
+      let sexVal = document.querySelector('input[name="sex"]:checked');
+      let persistVal = document.querySelector('input[name="persist"]:checked');
+      let grossVal = document.querySelector('input[name="gross"]:checked');
+      let resultDiv = document.getElementById("result");
+      resultDiv.className = "result-box"; // Reset styling
+
+      if (!(rbcVal && ageVal && smokeVal && sexVal && persistVal && grossVal)) {
+        resultDiv.classList.add("error");
+        resultDiv.textContent = "Please select an option for every field above.";
+        document.getElementById("riskTable").style.display = "none";
+        return;
+      }
+
+      let rbc = rbcVal.value;
+      let agegrp = ageVal.value;
+      let smoke = smokeVal.value;
+      let sex = sexVal.value;
+      let persist = persistVal.value;
+      let gross = grossVal.value;
+      let extra = document.querySelectorAll('.extra-factor:checked').length;
+
+      let age = 0;
+      if (agegrp === "<40") age = 35;
+      if (agegrp === "40-59") age = 50;
+      if (agegrp === "60+") age = 65;
+      let lowSexAge = (sex === "F" && age < 60) || (sex === "M" && age < 40);
+      let highSexAge = (sex === "M" && age >= 60);
+      let persistent = (persist === "yes") && (rbc === "3-10" || rbc === "11-25");
+
+      let low_risk =
+        rbc === "3-10" &&
+        lowSexAge &&
+        smoke === "never" &&
+        extra === 0 &&
+        !persistent &&
+        gross === "no";
+
+      let high_risk =
+        rbc === ">25" ||
+        highSexAge ||
+        smoke === ">30" ||
+        gross === "yes" ||
+        (extra > 1 && (rbc !== "3-10" || persistent || smoke !== "never"));
+
+      let intermediate_risk = !low_risk && !high_risk;
+
+      let message = "";
+      if (low_risk) {
+        message = "Low/Negligible Risk: Repeat urinalysis in 6 months; no initial cystoscopy or imaging unless symptoms evolve.";
+      } else if (high_risk) {
+        message = "High Risk: Cystoscopy plus cross-sectional imaging (CT urography preferred). Consider urine markers for upper tract urothelial carcinoma (e.g., UroVysion, NMP22) or urine cytology for bladder cancer detection, especially in patients with additional risk factors or suspicious clinical findings.";
+      } else if (intermediate_risk) {
+        message = "Intermediate Risk: Cystoscopy & renal/bladder ultrasound. May consider urine cytology (to detect high-grade urothelial carcinoma or carcinoma in situ) or urine markers as adjunctive tests to enhance detection, especially if initial workup is negative but clinical suspicion remains.";
+      } else {
+        message = "Unable to categorize; please check input values.";
+        resultDiv.classList.add("error");
+      }
+      resultDiv.textContent = message;
+      document.getElementById("riskTable").style.display = "table";
+    };
+  </script>
+</body>
+</html>
